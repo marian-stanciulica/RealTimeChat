@@ -5,6 +5,11 @@
 ## Build generated
 build/
 DerivedData/
+Pods/
+RealTimeChatTests/
+RealTimeChatUITests/
+RealTimeChat.xcodeproj
+RealTimeChat.xcworkspace
 
 ## Various settings
 *.pbxuser
@@ -37,6 +42,7 @@ playground.xcworkspace
 # Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
 # Packages/
 # Package.pins
+# Package.resolved
 .build/
 
 # CocoaPods
