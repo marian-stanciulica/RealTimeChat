@@ -11,42 +11,6 @@ import Firebase
 
 class UserCell: UITableViewCell {
     
-    var message: Message? {
-        didSet {
-            setupNameAndProfileImage()
-            
-            self.detailTextLabel?.text = message?.text
-            
-            if let seconds = message?.timestamp?.doubleValue {
-                let timestampDate = NSDate(timeIntervalSince1970: seconds)
-                
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "hh:mm:ss a"
-                
-                timeLabel.text = dateFormatter.string(from: timestampDate as Date)
-            }
-            
-        }
-    }
-    
-    private func setupNameAndProfileImage() {
-        
-        if let id = message?.checkPartnerID() {
-            let ref = Database.database().reference().child("users").child(id)
-            ref.observe(.value, with: { (snapshot) in
-                
-                if let dictionary = snapshot.value as? [String: Any] {
-                    self.textLabel?.text = dictionary["name"] as? String
-                    
-                    if let profileImageUrl = dictionary["profileImageUrl"] as? String {
-                        self.profileImageView.loadImageUsingCacheWithUrlString(urlString: profileImageUrl)
-                    }
-                }
-                
-            }, withCancel: nil)
-        }
-    }
-    
     let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -64,6 +28,38 @@ class UserCell: UITableViewCell {
         return label
     }()
     
+    var message: Message? {
+        didSet {
+            setupNameAndProfileImage()
+            self.detailTextLabel?.text = message?.text
+            
+            if let seconds = message?.timestamp?.doubleValue {
+                let timestampDate = NSDate(timeIntervalSince1970: seconds)
+                let dateFormatter = DateFormatter()
+                
+                dateFormatter.dateFormat = "hh:mm:ss a"
+                timeLabel.text = dateFormatter.string(from: timestampDate as Date)
+            }
+        }
+    }
+    
+    private func setupNameAndProfileImage() {
+        
+        if let id = message?.chatPartnerID() {
+            let ref = Database.database().reference().child("users").child(id)
+            ref.observe(.value, with: { (snapshot) in
+                
+                if let dictionary = snapshot.value as? [String: Any] {
+                    self.textLabel?.text = dictionary["name"] as? String
+                    
+                    if let profileImageUrl = dictionary["profileImageUrl"] as? String {
+                        self.profileImageView.loadImageUsingCacheWithUrlString(urlString: profileImageUrl)
+                    }
+                }
+            }, withCancel: nil)
+        }
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -77,7 +73,6 @@ class UserCell: UITableViewCell {
         addSubview(profileImageView)
         addSubview(timeLabel)
         
-        // ios 9 constraint anchors
         profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
         profileImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
         profileImageView.widthAnchor.constraint(lessThanOrEqualToConstant: 48).isActive = true

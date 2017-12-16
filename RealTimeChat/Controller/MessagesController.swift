@@ -19,7 +19,7 @@ class MessagesController: UITableViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem.init(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
         
         let button = UIButton()
-        button.setImage(UIImage(named: "new_message_icon"), for: .normal)
+        button.setImage(UIImage(named: "messenger"), for: .normal)
         button.widthAnchor.constraint(equalToConstant: 32).isActive = true
         button.heightAnchor.constraint(equalToConstant: 32).isActive = true
         button.addTarget(self, action: #selector(handleNewMessage), for: .touchUpInside)
@@ -28,9 +28,31 @@ class MessagesController: UITableViewController {
         checkIfUserIsLoggedIn()
         
         tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
+        tableView.allowsSelectionDuringEditing = true
+        tableView.tableFooterView = UIView()
+    }
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         
-//        observeMessages()
-  
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        let message = self.messages[indexPath.row]
+        
+        if let chatPartnerID = message.chatPartnerID() {
+            Database.database().reference().child("user-messages").child(uid).child(chatPartnerID).removeValue(completionBlock: { (error, ref) in
+                
+                if error != nil {
+                    print("Failed to delete messages")
+                    return
+                }
+                
+                self.messagesDictionary.removeValue(forKey: chatPartnerID)
+                self.attemptReloadOfTable()
+            })
+        }
     }
     
     var messages = [Message]()
@@ -48,8 +70,15 @@ class MessagesController: UITableViewController {
 
                 let messageId = snapshot.key
                 self.fetchMessageWithMessageId(messageId: messageId)
-                
+    
             }, withCancel: nil)
+        }, withCancel: nil)
+        
+        ref.observe(.childRemoved, with: { (snapshot) in
+            
+            self.messagesDictionary.removeValue(forKey: snapshot.key)
+            self.attemptReloadOfTable()
+            
         }, withCancel: nil)
     }
     
@@ -60,7 +89,7 @@ class MessagesController: UITableViewController {
                 
                 let message = Message(dictionary: dictionary)
                 
-                if let chatPartnerId = message.checkPartnerID() {
+                if let chatPartnerId = message.chatPartnerID() {
                     self.messagesDictionary[chatPartnerId] = message
                 }
                 
@@ -83,7 +112,6 @@ class MessagesController: UITableViewController {
         })
         
         DispatchQueue.main.async {
-            print("we reloaded the table")
             self.tableView.reloadData()
         }
     }
@@ -106,9 +134,8 @@ class MessagesController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
         let message = messages[indexPath.row]
-        guard let chatPartnerId = message.checkPartnerID() else { return }
+        guard let chatPartnerId = message.chatPartnerID() else { return }
         
         let ref = Database.database().reference().child("users").child(chatPartnerId)
         ref.observeSingleEvent(of: .value, with: { (snapshot) in
@@ -183,7 +210,6 @@ class MessagesController: UITableViewController {
         
         containerView.addSubview(profileImageView)
         
-        // ios 9 constraints
         profileImageView.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
         profileImageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 40).isActive = true
@@ -203,8 +229,6 @@ class MessagesController: UITableViewController {
         containerView.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
         
         self.navigationItem.titleView = titleView
-        
-//        titleView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showChatControllerForUser)))
     }
     
     @objc func showChatControllerForUser(user: UserModel) {
@@ -214,7 +238,6 @@ class MessagesController: UITableViewController {
     }
     
     @objc func handleLogout() {
-        
         do {
             try Auth.auth().signOut()
         } catch let logoutError {
@@ -225,7 +248,6 @@ class MessagesController: UITableViewController {
         loginController.messageController = self
         present(loginController, animated: true, completion: nil)
     }
-
-
+    
 }
 

@@ -50,12 +50,8 @@ class LoginController: UIViewController {
         Auth.auth().signIn(withEmail: email, password: password, completion: {
             (user, error) in
             
-            if error != nil {
-                print(error ?? "default")
-                return
-            }
+            if error != nil { return }
             
-            print("Login successfully...")
             self.messageController?.fetchUserAndSetupNavBarTitle()
             self.dismiss(animated: true, completion: nil)
         })
@@ -98,12 +94,12 @@ class LoginController: UIViewController {
     }()
     
     let profileImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "game_of_thrones")
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 150, height: 150))
+        imageView.image = UIImage(named: "profile_image")
+        imageView.layer.cornerRadius = imageView.frame.size.width / 2
+        imageView.layer.masksToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
-        
-        
         imageView.isUserInteractionEnabled = true
         
         return imageView
@@ -127,11 +123,11 @@ class LoginController: UIViewController {
         
         // change height of nameTextField
         nameTextFieldHeightAnchor?.isActive = false
-        nameTextFieldHeightAnchor = nameTextField.heightAnchor.constraint(equalTo: inputContainerView.heightAnchor, multiplier: loginRegisterSegmentedControl.selectedSegmentIndex == 0 ? 0 : 1/3)
+        nameTextFieldHeightAnchor = nameTextField.heightAnchor.constraint(equalTo: inputContainerView.heightAnchor, multiplier: loginRegisterSegmentedControl.selectedSegmentIndex == 0 ? 0 : 1 / 3)
         nameTextFieldHeightAnchor?.isActive = true
         
         emailTextFieldHeightAnchor?.isActive = false
-        emailTextFieldHeightAnchor = emailTextField.heightAnchor.constraint(equalTo: inputContainerView.heightAnchor, multiplier: loginRegisterSegmentedControl.selectedSegmentIndex == 0 ? 1/2 : 1/3)
+        emailTextFieldHeightAnchor = emailTextField.heightAnchor.constraint(equalTo: inputContainerView.heightAnchor, multiplier: loginRegisterSegmentedControl.selectedSegmentIndex == 0 ? 1 / 2 : 1 / 3)
         emailTextFieldHeightAnchor?.isActive = true
         
         passwordTextFieldHeightAnchor?.isActive = false
@@ -210,7 +206,7 @@ class LoginController: UIViewController {
         nameTextField.leftAnchor.constraint(equalTo: inputContainerView.leftAnchor, constant: 12).isActive = true
         nameTextField.topAnchor.constraint(equalTo: inputContainerView.topAnchor).isActive = true
         nameTextField.widthAnchor.constraint(equalTo: inputContainerView.widthAnchor).isActive = true
-        nameTextFieldHeightAnchor = nameTextField.heightAnchor.constraint(equalTo: inputContainerView.heightAnchor, multiplier: 1/3)
+        nameTextFieldHeightAnchor = nameTextField.heightAnchor.constraint(equalTo: inputContainerView.heightAnchor, multiplier: 1 / 3)
         nameTextFieldHeightAnchor?.isActive = true
     }
     
@@ -225,7 +221,7 @@ class LoginController: UIViewController {
         emailTextField.leftAnchor.constraint(equalTo: inputContainerView.leftAnchor, constant: 12).isActive = true
         emailTextField.topAnchor.constraint(equalTo: nameTextField.bottomAnchor).isActive = true
         emailTextField.widthAnchor.constraint(equalTo: inputContainerView.widthAnchor).isActive = true
-        emailTextFieldHeightAnchor = emailTextField.heightAnchor.constraint(equalTo: inputContainerView.heightAnchor, multiplier: 1/3)
+        emailTextFieldHeightAnchor = emailTextField.heightAnchor.constraint(equalTo: inputContainerView.heightAnchor, multiplier: 1 / 3)
         emailTextFieldHeightAnchor?.isActive = true
     }
     
@@ -240,7 +236,7 @@ class LoginController: UIViewController {
         passwordTextField.leftAnchor.constraint(equalTo: inputContainerView.leftAnchor, constant: 12).isActive = true
         passwordTextField.topAnchor.constraint(equalTo: emailTextField.bottomAnchor).isActive = true
         passwordTextField.widthAnchor.constraint(equalTo: inputContainerView.widthAnchor).isActive = true
-        passwordTextFieldHeightAnchor = passwordTextField.heightAnchor.constraint(equalTo: inputContainerView.heightAnchor, multiplier: 1/3)
+        passwordTextFieldHeightAnchor = passwordTextField.heightAnchor.constraint(equalTo: inputContainerView.heightAnchor, multiplier: 1 / 3)
         passwordTextFieldHeightAnchor?.isActive = true
     }
     
@@ -248,7 +244,6 @@ class LoginController: UIViewController {
         return .lightContent
     }
 }
-
 
 extension UIColor {
     convenience init(r: CGFloat, g: CGFloat, b: CGFloat) {

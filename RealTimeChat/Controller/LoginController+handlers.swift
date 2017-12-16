@@ -20,6 +20,7 @@ extension LoginController: UIImagePickerControllerDelegate, UINavigationControll
         Auth.auth().createUser(withEmail: email, password: password, completion: {
             (user: User?, error) in
             if error != nil {
+                print(error)
                 return
             }
             
@@ -32,9 +33,7 @@ extension LoginController: UIImagePickerControllerDelegate, UINavigationControll
             if let profileImage = self.profileImageView.image, let uploadData = UIImageJPEGRepresentation(profileImage, 0.1) {
                 storageRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in
                     
-                    if error != nil {
-                        return
-                    }
+                    if error != nil { return }
                     
                     if let profileImageUrl = metadata?.downloadURL()?.absoluteString {
                         let values = ["name": name, "email": email, "profileImageUrl": profileImageUrl] as [String : Any]
@@ -74,7 +73,6 @@ extension LoginController: UIImagePickerControllerDelegate, UINavigationControll
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        
         var selectedImageFromPicker: UIImage?
         
         if let editedImage = info[UIImagePickerControllerEditedImage] as? UIImage {
@@ -91,7 +89,6 @@ extension LoginController: UIImagePickerControllerDelegate, UINavigationControll
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        print("canceled picker")
         dismiss(animated: true, completion: nil)
     }
     

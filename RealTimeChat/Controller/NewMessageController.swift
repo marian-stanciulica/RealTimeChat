@@ -56,7 +56,7 @@ class NewMessageController: UITableViewController {
         let user = users[indexPath.row]
         cell.textLabel?.text = user.name
         cell.detailTextLabel?.text = user.email
-        cell.profileImageView.image = UIImage(named: "new_message_icon")
+        cell.profileImageView.image = UIImage(named: "profile_image")
         cell.profileImageView.contentMode = .scaleAspectFill
         
         if let profileImageUrl = user.profileImageUrl {
