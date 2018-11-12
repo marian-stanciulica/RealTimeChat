@@ -127,6 +127,8 @@ class LoginController: UIViewController {
         let title = loginRegisterSegmentedControl.titleForSegment(at: loginRegisterSegmentedControl.selectedSegmentIndex)
         loginRegisterButton.setTitle(title, for: .normal)
         
+        profileImageView.isHidden = loginRegisterSegmentedControl.selectedSegmentIndex == 0
+        
         // change height of inputContainerView
         inputContainerViewHeightAnchor?.constant = loginRegisterSegmentedControl.selectedSegmentIndex == 0 ? 100 : 150
         
