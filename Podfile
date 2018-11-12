@@ -6,9 +6,10 @@ target 'RealTimeChat' do
   use_frameworks!
 
   # Pods for RealTimeChat
-pod 'Firebase/Database'
-pod 'Firebase/Auth'
-pod 'Firebase/Storage'
+pod 'Firebase/Database' , '~> 4.3.0'
+pod 'Firebase/Auth', '~> 4.3.0'
+pod 'Firebase/Storage', '~> 4.3.0'
+pod 'Pastel'
 
   target 'RealTimeChatTests' do
     inherit! :search_paths
